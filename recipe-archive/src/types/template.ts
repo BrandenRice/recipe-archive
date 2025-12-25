@@ -22,9 +22,9 @@ export interface PrintSize {
 
 // Predefined sizes
 export const PRINT_SIZES: Record<string, PrintSize> = {
-  'card-3x5': { name: '3x5 Card', width: 76.2, height: 127, type: 'card' },
-  'card-4x6': { name: '4x6 Card', width: 101.6, height: 152.4, type: 'card' },
-  'card-5x7': { name: '5x7 Card', width: 127, height: 177.8, type: 'card' },
+  'card-3x5': { name: '3x5 Card', width: 127, height: 76.2, type: 'card' },
+  'card-4x6': { name: '4x6 Card', width: 152.4, height: 101.6, type: 'card' },
+  'card-5x7': { name: '5x7 Card', width: 177.8, height: 127, type: 'card' },
   'letter': { name: 'Letter', width: 215.9, height: 279.4, type: 'paper' },
   'legal': { name: 'Legal', width: 215.9, height: 355.6, type: 'paper' },
   'a4': { name: 'A4', width: 210, height: 297, type: 'paper' },

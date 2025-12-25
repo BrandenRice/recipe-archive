@@ -10,7 +10,10 @@ export function AppShell() {
   return (
     <div className="app-shell">
       <header className="app-header">
-        <h1 className="app-title">Recipe Archive</h1>
+        <div className="app-brand">
+          <img src="/logo.svg" alt="Recipe Archive" className="app-logo" />
+          <h1 className="app-title">Recipe Archive</h1>
+        </div>
         <nav className="app-nav">
           <NavLink 
             to="/" 

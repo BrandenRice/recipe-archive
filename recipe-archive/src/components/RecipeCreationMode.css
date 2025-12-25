@@ -1,59 +1,95 @@
 /**
- * RecipeCreationMode styles
+ * RecipeCreationMode styles - Material Design
  */
 
 .recipe-creation-mode {
-  max-width: 800px;
-  margin: 0 auto;
+  width: 100%;
   text-align: center;
+  padding: 2rem 0;
 }
 
 .recipe-creation-mode h2 {
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
+  margin: 0 0 0.75rem;
+  color: var(--text-primary);
+  font-weight: 400;
 }
 
-.mode-description {
-  color: #666;
-  margin-bottom: 2rem;
+.recipe-creation-mode p {
+  color: var(--text-secondary);
+  margin: 0 0 2.5rem;
+  font-size: 1rem;
 }
 
-.mode-options {
+.creation-options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.mode-option {
-  background: white;
-  border: 2px solid #ecf0f1;
-  border-radius: 12px;
-  padding: 2rem;
+.creation-option {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2rem;
+  box-shadow: var(--shadow-1);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-normal);
+  border: 2px solid transparent;
   text-align: center;
 }
 
-.mode-option:hover {
-  border-color: #2c3e50;
+.creation-option:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-3);
+  border-color: var(--primary);
 }
 
-.mode-icon {
+.creation-option-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
+  display: block;
 }
 
-.mode-option h3 {
-  margin: 0 0 0.5rem;
-  color: #2c3e50;
+.creation-option h3 {
+  margin: 0 0 0.75rem;
+  color: var(--text-primary);
   font-size: 1.25rem;
+  font-weight: 500;
 }
 
-.mode-option p {
+.creation-option p {
   margin: 0;
-  color: #666;
-  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
   line-height: 1.5;
+}
+
+/* Scan option accent */
+.creation-option.scan {
+  border-left: 4px solid var(--primary);
+}
+
+.creation-option.scan:hover {
+  border-color: var(--primary);
+}
+
+/* Manual option accent */
+.creation-option.manual {
+  border-left: 4px solid var(--accent);
+}
+
+.creation-option.manual:hover {
+  border-color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .creation-options {
+    grid-template-columns: 1fr;
+    padding: 0 1rem;
+  }
+  
+  .creation-option {
+    padding: 2rem 1.5rem;
+  }
 }
