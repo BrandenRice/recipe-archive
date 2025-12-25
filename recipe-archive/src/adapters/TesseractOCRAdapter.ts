@@ -4,7 +4,7 @@
  * Requirements: 1.2, 1.4, 8.3
  */
 
-import Tesseract, { createWorker, Worker } from 'tesseract.js';
+import { createWorker, type Worker } from 'tesseract.js';
 import type { OCRAdapter, OCRResult, TextBlock, ImageSource } from '../types';
 
 /**

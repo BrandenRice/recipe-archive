@@ -7,7 +7,7 @@
 
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
-import { addTag, removeTag, validateTag } from '../services/tagOperations';
+import { addTag, removeTag } from '../services/tagOperations';
 import { arbitraryRecipe, arbitraryTag } from './generators';
 
 describe('Tag Operations Property Tests', () => {

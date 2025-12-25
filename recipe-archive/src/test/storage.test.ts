@@ -8,8 +8,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fc from 'fast-check';
 import { LocalStorageAdapter } from '../adapters/LocalStorageAdapter';
-import { arbitraryRecipe, arbitraryTemplate, arbitraryNonDefaultTemplate } from './generators';
-import type { StorageAdapter } from '../types';
+import { arbitraryRecipe, arbitraryTemplate } from './generators';
 
 /**
  * Test suite for storage adapters

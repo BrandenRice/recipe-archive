@@ -160,7 +160,7 @@ export class DOCXExportAdapter implements ExportAdapter {
       const borderColor = style.border.color.replace('#', '');
       const borderStyle = this.convertBorderStyle(style.border.style);
       
-      paragraphOptions.border = {
+      (paragraphOptions as { border?: typeof paragraphOptions.border }).border = {
         top: { style: borderStyle, size: style.border.width * 8, color: borderColor },
         bottom: { style: borderStyle, size: style.border.width * 8, color: borderColor },
         left: { style: borderStyle, size: style.border.width * 8, color: borderColor },
@@ -170,7 +170,7 @@ export class DOCXExportAdapter implements ExportAdapter {
     
     // Add shading (background color) if specified
     if (style.backgroundColor) {
-      paragraphOptions.shading = {
+      (paragraphOptions as { shading?: typeof paragraphOptions.shading }).shading = {
         fill: style.backgroundColor.replace('#', ''),
       };
     }
