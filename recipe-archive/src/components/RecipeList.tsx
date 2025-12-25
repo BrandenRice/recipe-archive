@@ -1,11 +1,11 @@
 /**
  * RecipeList component - Displays recipes with filtering and sorting
- * Requirements: 3.3, 3.4, 3.5, 6.1, 6.6, 6.7
+ * Requirements: 3.3, 3.4, 3.5, 6.1, 6.6, 6.7, 8.1, 8.5, 8.6
  */
 
 import { useState, useMemo } from 'react';
-import type { Recipe, RecipeFilter } from '../types';
-import { filterAndSortRecipes } from '../services';
+import type { Recipe, RecipeFilter, Collection } from '../types';
+import { filterAndSortRecipes, getCollectionsForRecipe } from '../services';
 import './RecipeList.css';
 
 export interface RecipeListProps {
@@ -15,6 +15,8 @@ export interface RecipeListProps {
   onPrint?: (recipe: Recipe) => void;
   availableTags: string[];
   availableAuthors: string[];
+  collections?: Collection[];
+  onAddToCollection?: (recipe: Recipe) => void;
 }
 
 const defaultFilter: RecipeFilter = {
@@ -30,6 +32,8 @@ export function RecipeList({
   onPrint,
   availableTags,
   availableAuthors,
+  collections = [],
+  onAddToCollection,
 }: RecipeListProps) {
   const [filter, setFilter] = useState<RecipeFilter>(defaultFilter);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -212,6 +216,8 @@ export function RecipeList({
               onSelect={onSelect}
               onDelete={onDelete}
               onPrint={onPrint}
+              collections={collections}
+              onAddToCollection={onAddToCollection}
             />
           ))
         )}
@@ -225,9 +231,11 @@ interface RecipeCardProps {
   onSelect: (recipe: Recipe) => void;
   onDelete: (id: string) => void;
   onPrint?: (recipe: Recipe) => void;
+  collections?: Collection[];
+  onAddToCollection?: (recipe: Recipe) => void;
 }
 
-function RecipeCard({ recipe, onSelect, onDelete, onPrint }: RecipeCardProps) {
+function RecipeCard({ recipe, onSelect, onDelete, onPrint, collections = [], onAddToCollection }: RecipeCardProps) {
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (confirm(`Delete "${recipe.title}"?`)) {
@@ -240,15 +248,33 @@ function RecipeCard({ recipe, onSelect, onDelete, onPrint }: RecipeCardProps) {
     onPrint?.(recipe);
   };
 
+  const handleAddToCollection = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onAddToCollection?.(recipe);
+  };
+
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString();
   };
+
+  // Get collections that contain this recipe
+  const recipeCollections = getCollectionsForRecipe(collections, recipe.id);
 
   return (
     <div className="recipe-card" onClick={() => onSelect(recipe)}>
       <div className="recipe-card-header">
         <h3 className="recipe-card-title">{recipe.title}</h3>
         <div className="recipe-card-actions">
+          {onAddToCollection && (
+            <button
+              type="button"
+              className="collection-btn"
+              onClick={handleAddToCollection}
+              title="Add to Collection"
+            >
+              📁
+            </button>
+          )}
           {onPrint && (
             <button
               type="button"
@@ -276,6 +302,13 @@ function RecipeCard({ recipe, onSelect, onDelete, onPrint }: RecipeCardProps) {
         <div className="recipe-card-tags">
           {recipe.tags.map(tag => (
             <span key={tag} className="recipe-tag">{tag}</span>
+          ))}
+        </div>
+      )}
+      {recipeCollections.length > 0 && (
+        <div className="recipe-card-collections">
+          {recipeCollections.map(collection => (
+            <span key={collection.id} className="collection-badge">{collection.name}</span>
           ))}
         </div>
       )}

@@ -9,7 +9,8 @@ import {
   RecipeListPage, 
   NewRecipePage, 
   RecipeEditorPage, 
-  TemplateManagerPage 
+  TemplateManagerPage,
+  CollectionsPage,
 } from './components';
 import './App.css';
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="recipe/:id" element={<RecipeEditorPage />} />
           <Route path="recipe/:id/edit" element={<RecipeEditorPage />} />
           <Route path="templates" element={<TemplateManagerPage />} />
+          <Route path="collections" element={<CollectionsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

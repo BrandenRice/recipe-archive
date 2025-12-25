@@ -11,9 +11,14 @@ export { ImageUploader } from './ImageUploader';
 export { TemplateList } from './TemplateList';
 export { TemplateEditor } from './TemplateEditor';
 export { PrintPreview } from './PrintPreview';
+export { CollectionList } from './CollectionList';
+export { CollectionDetail } from './CollectionDetail';
+export { AddToCollectionModal } from './AddToCollectionModal';
+export { DeleteConfirmationDialog } from './DeleteConfirmationDialog';
 export { 
   RecipeListPage, 
   NewRecipePage, 
   RecipeEditorPage, 
-  TemplateManagerPage 
+  TemplateManagerPage,
+  CollectionsPage,
 } from './pages';

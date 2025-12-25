@@ -1,26 +1,32 @@
 /**
  * Backup Operations Service
  * Provides JSON export and import functionality for recipe data backup
- * Requirements: 7.4, 7.5
+ * Requirements: 7.4, 7.5, 7.3 (collections)
  */
 
 import type { Recipe } from '../types/recipe';
 import type { Template } from '../types/template';
+import type { Collection } from '../types/collection';
 import type { ExportData, ImportResult, ImportError } from '../types/adapters';
 
 /** Current export format version */
 const EXPORT_VERSION = '1.0.0';
 
 /**
- * Exports recipes and templates to a JSON backup format
- * Generates ExportData with version, timestamp, all recipes and templates
- * Requirements: 7.4
+ * Exports recipes, templates, and collections to a JSON backup format
+ * Generates ExportData with version, timestamp, all recipes, templates, and collections
+ * Requirements: 7.4, 7.3
  * 
  * @param recipes - Array of recipes to export
  * @param templates - Array of templates to export
+ * @param collections - Optional array of collections to export
  * @returns ExportData object ready for JSON serialization
  */
-export function exportToJSON(recipes: Recipe[], templates: Template[]): ExportData {
+export function exportToJSON(
+  recipes: Recipe[],
+  templates: Template[],
+  collections?: Collection[]
+): ExportData {
   // Collect all unique tags from recipes
   const tagsSet = new Set<string>();
   recipes.forEach(recipe => {
@@ -33,6 +39,7 @@ export function exportToJSON(recipes: Recipe[], templates: Template[]): ExportDa
     recipes: recipes,
     templates: templates,
     tags: Array.from(tagsSet).sort(),
+    collections: collections,
   };
 }
 
@@ -83,6 +90,26 @@ function isValidTemplate(value: unknown): value is Template {
 }
 
 /**
+ * Validates that a value is a valid Collection object
+ * Requirements: 7.4
+ */
+function isValidCollection(value: unknown): value is Collection {
+  if (typeof value !== 'object' || value === null) return false;
+  
+  const obj = value as Record<string, unknown>;
+  
+  return (
+    typeof obj.id === 'string' &&
+    typeof obj.name === 'string' &&
+    (obj.description === null || typeof obj.description === 'string') &&
+    Array.isArray(obj.recipeIds) &&
+    obj.recipeIds.every((id: unknown) => typeof id === 'string') &&
+    typeof obj.createdAt === 'string' &&
+    typeof obj.updatedAt === 'string'
+  );
+}
+
+/**
  * Validates the structure of ExportData
  */
 function validateExportDataStructure(data: unknown): data is ExportData {
@@ -100,23 +127,24 @@ function validateExportDataStructure(data: unknown): data is ExportData {
 }
 
 /**
- * Imports recipes and templates from a JSON backup
+ * Imports recipes, templates, and collections from a JSON backup
  * Validates schema, handles duplicate IDs, returns ImportResult with details
- * Requirements: 7.5
+ * Requirements: 7.5, 7.4
  * 
  * @param jsonData - Raw JSON data (string or parsed object)
  * @param existingRecipeIds - Set of existing recipe IDs to detect duplicates
  * @param existingTemplateIds - Set of existing template IDs to detect duplicates
- * @returns ImportResult with validated recipes, templates, and any errors
+ * @returns ImportResult with validated recipes, templates, collections, and any errors
  */
 export function importFromJSON(
   jsonData: string | unknown,
   _existingRecipeIds: Set<string> = new Set(),
   _existingTemplateIds: Set<string> = new Set()
-): ImportResult & { recipes: Recipe[]; templates: Template[] } {
+): ImportResult & { recipes: Recipe[]; templates: Template[]; collections: Collection[] } {
   const errors: ImportError[] = [];
   const validRecipes: Recipe[] = [];
   const validTemplates: Template[] = [];
+  const validCollections: Collection[] = [];
 
   // Parse JSON if string
   let data: unknown;
@@ -127,9 +155,11 @@ export function importFromJSON(
       success: false,
       recipesImported: 0,
       templatesImported: 0,
+      collectionsImported: 0,
       errors: [{ type: 'recipe', id: '', message: 'Invalid JSON format' }],
       recipes: [],
       templates: [],
+      collections: [],
     };
   }
 
@@ -139,15 +169,18 @@ export function importFromJSON(
       success: false,
       recipesImported: 0,
       templatesImported: 0,
+      collectionsImported: 0,
       errors: [{ type: 'recipe', id: '', message: 'Invalid export data structure' }],
       recipes: [],
       templates: [],
+      collections: [],
     };
   }
 
   // Track IDs seen in this import to detect duplicates within the import file
   const seenRecipeIds = new Set<string>();
   const seenTemplateIds = new Set<string>();
+  const seenCollectionIds = new Set<string>();
 
   // Validate and collect recipes
   for (const recipe of data.recipes) {
@@ -201,13 +234,43 @@ export function importFromJSON(
     validTemplates.push(template);
   }
 
+  // Validate and collect collections (if present in export data)
+  if (data.collections && Array.isArray(data.collections)) {
+    for (const collection of data.collections) {
+      if (!isValidCollection(collection)) {
+        errors.push({
+          type: 'collection',
+          id: (collection as Record<string, unknown>)?.id?.toString() || 'unknown',
+          message: 'Invalid collection schema: missing required fields',
+        });
+        continue;
+      }
+
+      // Check for duplicate ID within import file
+      if (seenCollectionIds.has(collection.id)) {
+        errors.push({
+          type: 'collection',
+          id: collection.id,
+          message: 'Duplicate collection ID in import file',
+        });
+        continue;
+      }
+      seenCollectionIds.add(collection.id);
+
+      // Note: existing duplicates are handled by the storage adapter (update vs create)
+      validCollections.push(collection);
+    }
+  }
+
   return {
     success: errors.length === 0,
     recipesImported: validRecipes.length,
     templatesImported: validTemplates.length,
+    collectionsImported: validCollections.length,
     errors,
     recipes: validRecipes,
     templates: validTemplates,
+    collections: validCollections,
   };
 }
 

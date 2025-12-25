@@ -63,3 +63,17 @@ export {
   updateSectionInTemplate,
   removeSectionFromTemplate,
 } from './templateOperations';
+
+export {
+  createCollection,
+  validateCollectionName,
+  sortCollections,
+  addRecipeToCollection,
+  removeRecipeFromCollection,
+  getCollectionsForRecipe,
+  exportCollectionToJSON,
+  exportCollectionToPDF,
+  downloadBlob,
+} from './collectionOperations';
+
+export type { ValidationResult, CollectionPDFExportResult } from './collectionOperations';

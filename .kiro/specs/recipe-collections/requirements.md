@@ -92,3 +92,16 @@ This feature enables users to create and manage named collections of recipes wit
 2. WHEN the application loads, THE Collection_Manager SHALL retrieve all collections from storage
 3. WHEN collections are included in a full backup export, THE Export_Service SHALL include all collections in the export data
 4. WHEN importing a backup that contains collections, THE Collection_Manager SHALL import the collections and merge with existing data
+
+### Requirement 8: Recipe Card Collection Integration
+
+**User Story:** As a user, I want to add recipes to collections directly from recipe cards, so that I can quickly organize recipes while browsing.
+
+#### Acceptance Criteria
+
+1. THE Recipe_Archive SHALL display an "Add to Collection" button on each recipe card
+2. WHEN a user clicks the "Add to Collection" button, THE Collection_Manager SHALL display a dropdown or modal listing all available collections
+3. WHEN a user selects a collection from the list, THE Collection_Manager SHALL add the recipe to that collection
+4. WHEN a recipe is already in a selected collection, THE Collection_Manager SHALL indicate this and prevent duplicate addition
+5. THE Recipe_Archive SHALL display collection indicators on recipe cards showing which collections contain that recipe
+6. WHEN a recipe belongs to multiple collections, THE Recipe_Archive SHALL display all collection names as indicators on the recipe card

@@ -34,6 +34,12 @@ export function AppShell() {
           >
             Templates
           </NavLink>
+          <NavLink 
+            to="/collections" 
+            className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
+          >
+            Collections
+          </NavLink>
         </nav>
       </header>
       <main className="app-main">

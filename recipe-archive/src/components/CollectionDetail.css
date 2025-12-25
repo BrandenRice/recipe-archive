@@ -1,0 +1,236 @@
+/**
+ * CollectionDetail styles - Material Design
+ */
+
+.collection-detail {
+  width: 100%;
+}
+
+.collection-detail-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.back-btn {
+  padding: 0.625rem 1rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid #D7CCC8;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all var(--transition-fast);
+  box-shadow: none;
+}
+
+.back-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.collection-detail-title-section {
+  flex: 1;
+  min-width: 200px;
+}
+
+.collection-detail-title {
+  margin: 0 0 0.5rem;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+}
+
+.collection-detail-description {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.collection-detail-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.export-btn {
+  padding: 0.625rem 1.25rem;
+  border: 1px solid #D7CCC8;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 0.8125rem;
+  transition: all var(--transition-fast);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: none;
+  color: var(--text-secondary);
+}
+
+.export-btn:hover:not(:disabled) {
+  box-shadow: var(--shadow-1);
+}
+
+.export-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pdf-btn {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.pdf-btn:hover:not(:disabled) {
+  background: var(--primary);
+  color: white;
+}
+
+.json-btn {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.json-btn:hover:not(:disabled) {
+  background: var(--accent);
+  color: white;
+}
+
+.collection-detail-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.5rem;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-1);
+}
+
+.recipe-count-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 1rem;
+  background: var(--secondary);
+  border-radius: 16px;
+  font-size: 0.875rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.collection-date {
+  color: var(--text-light);
+  font-size: 0.875rem;
+}
+
+.empty-collection {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+}
+
+.empty-collection p {
+  margin: 0 0 0.5rem;
+}
+
+.empty-hint {
+  font-size: 0.875rem;
+  color: var(--text-light);
+}
+
+.collection-recipes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.collection-recipe-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-1);
+  transition: all var(--transition-fast);
+  border-left: 3px solid transparent;
+}
+
+.collection-recipe-card:hover {
+  border-left-color: var(--primary);
+  box-shadow: var(--shadow-2);
+}
+
+.collection-recipe-info {
+  flex: 1;
+}
+
+.collection-recipe-title {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.collection-recipe-author {
+  margin: 0 0 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.collection-recipe-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.collection-recipe-tags .recipe-tag {
+  padding: 0.125rem 0.5rem;
+  background: var(--secondary);
+  border-radius: 10px;
+  font-size: 0.6875rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.remove-recipe-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 0.5rem;
+  line-height: 1;
+  border-radius: 50%;
+  transition: all var(--transition-fast);
+  box-shadow: none;
+  flex-shrink: 0;
+}
+
+.remove-recipe-btn:hover {
+  color: #D32F2F;
+  background: rgba(211, 47, 47, 0.08);
+  box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .collection-detail-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .collection-detail-actions {
+    justify-content: flex-start;
+  }
+  
+  .collection-detail-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}

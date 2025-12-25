@@ -409,3 +409,40 @@
     align-items: flex-start;
   }
 }
+
+
+/* Collection button and badges */
+.collection-btn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.375rem;
+  opacity: 0.6;
+  transition: all var(--transition-fast);
+  border-radius: 50%;
+  box-shadow: none;
+}
+
+.collection-btn:hover {
+  opacity: 1;
+  background: rgba(255, 107, 53, 0.08);
+  box-shadow: none;
+}
+
+.recipe-card-collections {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-bottom: 0.75rem;
+}
+
+.collection-badge {
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 107, 53, 0.1);
+  border: 1px solid var(--primary);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: var(--primary);
+  font-weight: 500;
+}

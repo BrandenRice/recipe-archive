@@ -12,11 +12,13 @@ import type {
 } from '../types/adapters';
 import type { Recipe, RecipeFilter } from '../types/recipe';
 import type { Template } from '../types/template';
+import type { Collection } from '../types/collection';
 
 const DB_NAME = 'recipe-archive';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const RECIPES_STORE = 'recipes';
 const TEMPLATES_STORE = 'templates';
+const COLLECTIONS_STORE = 'collections';
 
 export class IndexedDBStorageAdapter implements StorageAdapter {
   private db: IDBDatabase | null = null;
@@ -58,6 +60,12 @@ export class IndexedDBStorageAdapter implements StorageAdapter {
           const templatesStore = db.createObjectStore(TEMPLATES_STORE, { keyPath: 'id' });
           templatesStore.createIndex('name', 'name', { unique: false });
           templatesStore.createIndex('isDefault', 'isDefault', { unique: false });
+        }
+
+        // Create collections store
+        if (!db.objectStoreNames.contains(COLLECTIONS_STORE)) {
+          const collectionsStore = db.createObjectStore(COLLECTIONS_STORE, { keyPath: 'id' });
+          collectionsStore.createIndex('name', 'name', { unique: false });
         }
       };
     });
@@ -241,11 +249,55 @@ export class IndexedDBStorageAdapter implements StorageAdapter {
     return this.promisifyRequest(store.getAll());
   }
 
+  // ==================== Collection Operations ====================
+
+  async createCollection(collection: Collection): Promise<Collection> {
+    const store = await this.getTransaction(COLLECTIONS_STORE, 'readwrite');
+    await this.promisifyRequest(store.add(collection));
+    return collection;
+  }
+
+  async getCollection(id: string): Promise<Collection | null> {
+    const store = await this.getTransaction(COLLECTIONS_STORE, 'readonly');
+    const result = await this.promisifyRequest(store.get(id));
+    return result || null;
+  }
+
+  async updateCollection(id: string, updates: Partial<Collection>): Promise<Collection> {
+    const store = await this.getTransaction(COLLECTIONS_STORE, 'readwrite');
+    const existing = await this.promisifyRequest(store.get(id));
+    
+    if (!existing) {
+      throw new Error(`Collection with id ${id} not found`);
+    }
+
+    const updated: Collection = {
+      ...existing,
+      ...updates,
+      id, // Ensure ID cannot be changed
+      updatedAt: new Date().toISOString(),
+    };
+
+    await this.promisifyRequest(store.put(updated));
+    return updated;
+  }
+
+  async deleteCollection(id: string): Promise<void> {
+    const store = await this.getTransaction(COLLECTIONS_STORE, 'readwrite');
+    await this.promisifyRequest(store.delete(id));
+  }
+
+  async listCollections(): Promise<Collection[]> {
+    const store = await this.getTransaction(COLLECTIONS_STORE, 'readonly');
+    return this.promisifyRequest(store.getAll());
+  }
+
   // ==================== Bulk Operations ====================
 
   async exportAll(): Promise<ExportData> {
     const recipes = await this.listRecipes();
     const templates = await this.listTemplates();
+    const collections = await this.listCollections();
     
     // Collect all unique tags from recipes
     const tagsSet = new Set<string>();
@@ -259,6 +311,7 @@ export class IndexedDBStorageAdapter implements StorageAdapter {
       recipes,
       templates,
       tags: Array.from(tagsSet),
+      collections,
     };
   }
 
@@ -266,6 +319,7 @@ export class IndexedDBStorageAdapter implements StorageAdapter {
     const errors: ImportError[] = [];
     let recipesImported = 0;
     let templatesImported = 0;
+    let collectionsImported = 0;
 
     // Import recipes
     for (const recipe of data.recipes) {
@@ -307,10 +361,33 @@ export class IndexedDBStorageAdapter implements StorageAdapter {
       }
     }
 
+    // Import collections (if present in export data)
+    if (data.collections) {
+      for (const collection of data.collections) {
+        try {
+          // Check if collection already exists
+          const existing = await this.getCollection(collection.id);
+          if (existing) {
+            await this.updateCollection(collection.id, collection);
+          } else {
+            await this.createCollection(collection);
+          }
+          collectionsImported++;
+        } catch (error) {
+          errors.push({
+            type: 'collection',
+            id: collection.id,
+            message: error instanceof Error ? error.message : 'Unknown error',
+          });
+        }
+      }
+    }
+
     return {
       success: errors.length === 0,
       recipesImported,
       templatesImported,
+      collectionsImported,
       errors,
     };
   }
@@ -333,11 +410,12 @@ export class IndexedDBStorageAdapter implements StorageAdapter {
     await this.init();
     if (!this.db) throw new Error('Database not initialized');
 
-    const transaction = this.db.transaction([RECIPES_STORE, TEMPLATES_STORE], 'readwrite');
+    const transaction = this.db.transaction([RECIPES_STORE, TEMPLATES_STORE, COLLECTIONS_STORE], 'readwrite');
     
     await Promise.all([
       this.promisifyRequest(transaction.objectStore(RECIPES_STORE).clear()),
       this.promisifyRequest(transaction.objectStore(TEMPLATES_STORE).clear()),
+      this.promisifyRequest(transaction.objectStore(COLLECTIONS_STORE).clear()),
     ]);
   }
 }

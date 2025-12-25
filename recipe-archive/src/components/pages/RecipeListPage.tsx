@@ -1,15 +1,17 @@
 /**
  * RecipeListPage - Page component for displaying recipe list
- * Requirements: 3.3, 3.4, 3.5, 7.4, 7.5
+ * Requirements: 3.3, 3.4, 3.5, 7.4, 7.5, 8.1, 8.5, 8.6
  */
 
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RecipeList } from '../RecipeList';
 import { PrintPreview } from '../PrintPreview';
+import { AddToCollectionModal } from '../AddToCollectionModal';
 import { IndexedDBStorageAdapter } from '../../adapters';
 import { exportToJSON, importFromJSON, createExportBlob, generateExportFilename } from '../../services/backupOperations';
-import type { Recipe, Template } from '../../types';
+import { addRecipeToCollection, removeRecipeFromCollection } from '../../services/collectionOperations';
+import type { Recipe, Template, Collection } from '../../types';
 
 // Create a singleton storage adapter
 const storage = new IndexedDBStorageAdapter();
@@ -18,10 +20,13 @@ export function RecipeListPage() {
   const navigate = useNavigate();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
+  const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [showPrintPreview, setShowPrintPreview] = useState(false);
+  const [showCollectionModal, setShowCollectionModal] = useState(false);
+  const [collectionRecipe, setCollectionRecipe] = useState<Recipe | null>(null);
   const [importStatus, setImportStatus] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -33,12 +38,14 @@ export function RecipeListPage() {
     try {
       setLoading(true);
       setError(null);
-      const [loadedRecipes, loadedTemplates] = await Promise.all([
+      const [loadedRecipes, loadedTemplates, loadedCollections] = await Promise.all([
         storage.listRecipes(),
         storage.listTemplates(),
+        storage.listCollections(),
       ]);
       setRecipes(loadedRecipes);
       setTemplates(loadedTemplates);
+      setCollections(loadedCollections);
     } catch (err) {
       setError('Failed to load recipes. Please try again.');
       console.error('Error loading data:', err);
@@ -69,6 +76,53 @@ export function RecipeListPage() {
   const handleClosePrintPreview = () => {
     setShowPrintPreview(false);
     setSelectedRecipe(null);
+  };
+
+  // Collection handlers
+  const handleAddToCollection = (recipe: Recipe) => {
+    setCollectionRecipe(recipe);
+    setShowCollectionModal(true);
+  };
+
+  const handleCloseCollectionModal = () => {
+    setShowCollectionModal(false);
+    setCollectionRecipe(null);
+  };
+
+  const handleToggleCollection = async (collectionId: string, isAdding: boolean) => {
+    if (!collectionRecipe) return;
+
+    try {
+      const collection = collections.find(c => c.id === collectionId);
+      if (!collection) return;
+
+      const updatedCollection = isAdding
+        ? addRecipeToCollection(collection, collectionRecipe.id)
+        : removeRecipeFromCollection(collection, collectionRecipe.id);
+
+      await storage.updateCollection(collectionId, updatedCollection);
+      setCollections(prev =>
+        prev.map(c => (c.id === collectionId ? updatedCollection : c))
+      );
+    } catch (err) {
+      console.error('Error updating collection:', err);
+      alert('Failed to update collection. Please try again.');
+    }
+  };
+
+  const handleCreateCollection = async (newCollection: Collection) => {
+    try {
+      // Add the recipe to the new collection
+      const collectionWithRecipe = collectionRecipe
+        ? addRecipeToCollection(newCollection, collectionRecipe.id)
+        : newCollection;
+
+      await storage.createCollection(collectionWithRecipe);
+      setCollections(prev => [...prev, collectionWithRecipe]);
+    } catch (err) {
+      console.error('Error creating collection:', err);
+      alert('Failed to create collection. Please try again.');
+    }
   };
 
   // JSON Backup Export
@@ -240,6 +294,8 @@ export function RecipeListPage() {
         onPrint={handlePrintRecipe}
         availableTags={availableTags}
         availableAuthors={availableAuthors}
+        collections={collections}
+        onAddToCollection={handleAddToCollection}
       />
 
       {/* Print Preview Modal */}
@@ -248,6 +304,18 @@ export function RecipeListPage() {
           recipe={selectedRecipe}
           templates={templates}
           onClose={handleClosePrintPreview}
+        />
+      )}
+
+      {/* Add to Collection Modal */}
+      {showCollectionModal && collectionRecipe && (
+        <AddToCollectionModal
+          recipeId={collectionRecipe.id}
+          recipeTitle={collectionRecipe.title}
+          collections={collections}
+          onClose={handleCloseCollectionModal}
+          onToggleCollection={handleToggleCollection}
+          onCreateCollection={handleCreateCollection}
         />
       )}
     </div>

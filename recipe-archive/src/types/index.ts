@@ -8,6 +8,8 @@ export type {
   RecipeFilter,
 } from './recipe';
 
+export type { Collection } from './collection';
+
 export type {
   Template,
   PrintSize,

@@ -13,14 +13,17 @@ import type {
 } from '../types/adapters';
 import type { Recipe, RecipeFilter } from '../types/recipe';
 import type { Template } from '../types/template';
+import type { Collection } from '../types/collection';
 
 const RECIPES_KEY = 'recipe-archive-recipes';
 const TEMPLATES_KEY = 'recipe-archive-templates';
+const COLLECTIONS_KEY = 'recipe-archive-collections';
 const SIZE_WARNING_THRESHOLD = 4 * 1024 * 1024; // 4MB warning threshold
 
 export class LocalStorageAdapter implements StorageAdapter {
   private recipes: Map<string, Recipe> = new Map();
   private templates: Map<string, Template> = new Map();
+  private collections: Map<string, Collection> = new Map();
   private initialized = false;
 
   /**
@@ -40,6 +43,12 @@ export class LocalStorageAdapter implements StorageAdapter {
       if (templatesData) {
         const templates: Template[] = JSON.parse(templatesData);
         templates.forEach(template => this.templates.set(template.id, template));
+      }
+
+      const collectionsData = localStorage.getItem(COLLECTIONS_KEY);
+      if (collectionsData) {
+        const collections: Collection[] = JSON.parse(collectionsData);
+        collections.forEach(collection => this.collections.set(collection.id, collection));
       }
 
       this.initialized = true;
@@ -65,6 +74,15 @@ export class LocalStorageAdapter implements StorageAdapter {
     const data = JSON.stringify(Array.from(this.templates.values()));
     this.checkStorageSize(data, 'templates');
     localStorage.setItem(TEMPLATES_KEY, data);
+  }
+
+  /**
+   * Persist collections to localStorage
+   */
+  private persistCollections(): void {
+    const data = JSON.stringify(Array.from(this.collections.values()));
+    this.checkStorageSize(data, 'collections');
+    localStorage.setItem(COLLECTIONS_KEY, data);
   }
 
   /**
@@ -235,12 +253,58 @@ export class LocalStorageAdapter implements StorageAdapter {
     return Array.from(this.templates.values());
   }
 
+  // ==================== Collection Operations ====================
+
+  async createCollection(collection: Collection): Promise<Collection> {
+    this.init();
+    this.collections.set(collection.id, collection);
+    this.persistCollections();
+    return collection;
+  }
+
+  async getCollection(id: string): Promise<Collection | null> {
+    this.init();
+    return this.collections.get(id) || null;
+  }
+
+  async updateCollection(id: string, updates: Partial<Collection>): Promise<Collection> {
+    this.init();
+    const existing = this.collections.get(id);
+    
+    if (!existing) {
+      throw new Error(`Collection with id ${id} not found`);
+    }
+
+    const updated: Collection = {
+      ...existing,
+      ...updates,
+      id, // Ensure ID cannot be changed
+      updatedAt: new Date().toISOString(),
+    };
+
+    this.collections.set(id, updated);
+    this.persistCollections();
+    return updated;
+  }
+
+  async deleteCollection(id: string): Promise<void> {
+    this.init();
+    this.collections.delete(id);
+    this.persistCollections();
+  }
+
+  async listCollections(): Promise<Collection[]> {
+    this.init();
+    return Array.from(this.collections.values());
+  }
+
   // ==================== Bulk Operations ====================
 
   async exportAll(): Promise<ExportData> {
     this.init();
     const recipes = Array.from(this.recipes.values());
     const templates = Array.from(this.templates.values());
+    const collections = Array.from(this.collections.values());
     
     // Collect all unique tags from recipes
     const tagsSet = new Set<string>();
@@ -254,6 +318,7 @@ export class LocalStorageAdapter implements StorageAdapter {
       recipes,
       templates,
       tags: Array.from(tagsSet),
+      collections,
     };
   }
 
@@ -262,6 +327,7 @@ export class LocalStorageAdapter implements StorageAdapter {
     const errors: ImportError[] = [];
     let recipesImported = 0;
     let templatesImported = 0;
+    let collectionsImported = 0;
 
     // Import recipes
     for (const recipe of data.recipes) {
@@ -291,14 +357,32 @@ export class LocalStorageAdapter implements StorageAdapter {
       }
     }
 
+    // Import collections (if present in export data)
+    if (data.collections) {
+      for (const collection of data.collections) {
+        try {
+          this.collections.set(collection.id, collection);
+          collectionsImported++;
+        } catch (error) {
+          errors.push({
+            type: 'collection',
+            id: collection.id,
+            message: error instanceof Error ? error.message : 'Unknown error',
+          });
+        }
+      }
+    }
+
     // Persist all changes
     this.persistRecipes();
     this.persistTemplates();
+    this.persistCollections();
 
     return {
       success: errors.length === 0,
       recipesImported,
       templatesImported,
+      collectionsImported,
       errors,
     };
   }
@@ -309,7 +393,9 @@ export class LocalStorageAdapter implements StorageAdapter {
   async clear(): Promise<void> {
     this.recipes.clear();
     this.templates.clear();
+    this.collections.clear();
     localStorage.removeItem(RECIPES_KEY);
     localStorage.removeItem(TEMPLATES_KEY);
+    localStorage.removeItem(COLLECTIONS_KEY);
   }
 }

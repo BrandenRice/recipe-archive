@@ -4,6 +4,7 @@
 
 import type { Recipe, RecipeFilter } from './recipe';
 import type { Template, PrintSize } from './template';
+import type { Collection } from './collection';
 
 /**
  * Storage Adapter Interface
@@ -24,6 +25,13 @@ export interface StorageAdapter {
   updateTemplate(id: string, template: Partial<Template>): Promise<Template>;
   deleteTemplate(id: string): Promise<void>;
   listTemplates(): Promise<Template[]>;
+
+  // Collection operations
+  createCollection(collection: Collection): Promise<Collection>;
+  getCollection(id: string): Promise<Collection | null>;
+  updateCollection(id: string, collection: Partial<Collection>): Promise<Collection>;
+  deleteCollection(id: string): Promise<void>;
+  listCollections(): Promise<Collection[]>;
 
   // Bulk operations
   exportAll(): Promise<ExportData>;
@@ -92,17 +100,19 @@ export interface ExportData {
   recipes: Recipe[];
   templates: Template[];
   tags: string[];
+  collections?: Collection[];
 }
 
 export interface ImportResult {
   success: boolean;
   recipesImported: number;
   templatesImported: number;
+  collectionsImported: number;
   errors: ImportError[];
 }
 
 export interface ImportError {
-  type: 'recipe' | 'template';
+  type: 'recipe' | 'template' | 'collection';
   id: string;
   message: string;
 }
