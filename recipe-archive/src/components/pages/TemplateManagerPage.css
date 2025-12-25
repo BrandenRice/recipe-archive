@@ -1,0 +1,32 @@
+/**
+ * TemplateManagerPage styles
+ */
+
+.template-manager-page {
+  padding: 1rem;
+}
+
+.template-manager-page .loading,
+.template-manager-page .error {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.template-manager-page .error {
+  color: #e74c3c;
+}
+
+.template-manager-page .error button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: #2c3e50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.template-manager-page .error button:hover {
+  background: #34495e;
+}

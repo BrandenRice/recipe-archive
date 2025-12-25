@@ -1,0 +1,59 @@
+/**
+ * RecipeCreationMode styles
+ */
+
+.recipe-creation-mode {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.recipe-creation-mode h2 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.mode-description {
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.mode-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.mode-option {
+  background: white;
+  border: 2px solid #ecf0f1;
+  border-radius: 12px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.mode-option:hover {
+  border-color: #2c3e50;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.mode-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.mode-option h3 {
+  margin: 0 0 0.5rem;
+  color: #2c3e50;
+  font-size: 1.25rem;
+}
+
+.mode-option p {
+  margin: 0;
+  color: #666;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}

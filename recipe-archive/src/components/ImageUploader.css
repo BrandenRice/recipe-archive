@@ -1,0 +1,228 @@
+/**
+ * ImageUploader styles
+ */
+
+.image-uploader {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.uploader-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.uploader-header h2 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+/* Drop Zone */
+.drop-zone {
+  background: white;
+  border: 3px dashed #bdc3c7;
+  border-radius: 12px;
+  padding: 4rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.drop-zone:hover {
+  border-color: #2c3e50;
+  background: #f8f9fa;
+}
+
+.drop-zone.dragging {
+  border-color: #3498db;
+  background: #ebf5fb;
+}
+
+.drop-zone-content {
+  pointer-events: none;
+}
+
+.drop-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.drop-text {
+  font-size: 1.25rem;
+  color: #2c3e50;
+  margin: 0 0 0.5rem;
+}
+
+.drop-hint {
+  font-size: 0.875rem;
+  color: #95a5a6;
+  margin: 0;
+}
+
+/* Processing State */
+.processing-state {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.processing-state .image-preview {
+  max-width: 400px;
+  margin: 0 auto 2rem;
+}
+
+.processing-state .image-preview img {
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.progress-container {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #ecf0f1;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3498db, #2ecc71);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-message {
+  color: #666;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* Editing State */
+.editing-state {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.editing-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .editing-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.editing-state .image-preview {
+  position: sticky;
+  top: 1rem;
+}
+
+.editing-state .image-preview img {
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.extracted-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.inferred-badge {
+  font-size: 0.75rem;
+  font-weight: normal;
+  background: #2ecc71;
+  color: white;
+  padding: 0.125rem 0.5rem;
+  border-radius: 12px;
+}
+
+.edit-hint {
+  font-size: 0.75rem;
+  font-weight: normal;
+  color: #95a5a6;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #2c3e50;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 200px;
+}
+
+.editing-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-primary {
+  background: #2c3e50;
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #1a252f;
+}
+
+.btn-secondary {
+  background: white;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+.btn-secondary:hover {
+  background: #f5f5f5;
+}

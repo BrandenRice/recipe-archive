@@ -1,0 +1,207 @@
+/**
+ * TemplateList styles
+ */
+
+.template-list {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.template-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.template-list-header h2 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.template-list-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.size-filter {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  background: white;
+  cursor: pointer;
+}
+
+.size-filter:focus {
+  outline: none;
+  border-color: #2c3e50;
+}
+
+.create-template-btn {
+  padding: 0.5rem 1rem;
+  background: #2c3e50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.create-template-btn:hover {
+  background: #34495e;
+}
+
+.template-section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1rem;
+  color: #666;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.template-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.no-templates {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  background: white;
+  border-radius: 8px;
+  border: 2px dashed #ddd;
+}
+
+.template-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 2px solid transparent;
+}
+
+.template-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.template-card.default {
+  border-color: #3498db;
+}
+
+.template-card.custom {
+  border-color: #2ecc71;
+}
+
+.template-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.template-card-title {
+  margin: 0;
+  font-size: 1rem;
+  color: #2c3e50;
+  word-break: break-word;
+}
+
+.template-card .delete-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.template-card .delete-btn:hover {
+  color: #e74c3c;
+}
+
+.template-card-preview {
+  margin-bottom: 0.75rem;
+}
+
+.mini-preview {
+  position: relative;
+  width: 100%;
+  padding-top: 75%; /* 4:3 aspect ratio */
+  background: #f8f9fa;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.mini-section {
+  position: absolute;
+  border-radius: 2px;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.template-card:hover .mini-section {
+  opacity: 1;
+}
+
+.template-card-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.template-size {
+  font-size: 0.875rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.template-type-badge {
+  font-size: 0.75rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.template-card.default .template-type-badge {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.template-card.custom .template-type-badge {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.template-card-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.section-count {
+  color: #666;
+}
+
+.template-date {
+  color: #999;
+}
